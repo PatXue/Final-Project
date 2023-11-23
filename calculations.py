@@ -20,6 +20,13 @@ class Simulation:
 
         self.pos_array = np.ndarray((3,n))
         self.mom_array = np.ndarray((3,n))
+
+    def calc_force(self) -> np.ndarray:
+        '''Returns the force on each particle based on the current particles'
+        position as an ndarray of floats'''
+        return np.zeros((3,self.n))
+        
+
     def step(self, dt: float) -> None:
         '''Does physics calculations for one timestep.
         Called by visualization.ipynb'''
