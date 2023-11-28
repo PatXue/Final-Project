@@ -27,16 +27,16 @@ class Simulation:
         self.time = 0.0
 
         self.pos_array = np.zeros((3,n))
+        self.pos_array[0,:] = self.rest_len * (np.arange(n) + 1)
         self.mom_array = np.zeros((3,n))
+        self.force_array = np.zeros((3,n))
 
         # Array used for calculating position difference to determine
         # spring force
         # For the ith particle, used to calculate
-        # r_i - r_{i-1} + r_i - r_{i+1}
-        self.CALC_DIFF = np.diagflat(self.n * [2])
-        self.CALC_DIFF += np.diagflat((self.n-1) * [-1], -1)  
+        # r_i - r_{i-1}
+        self.CALC_DIFF = np.diagflat(self.n * [1])
         self.CALC_DIFF += np.diagflat((self.n-1) * [-1], 1)  
-        self.CALC_DIFF[-1,-1] = 1 # Final particle is linked only on 1 side
         self.CALC_DIFF = self.CALC_DIFF.reshape((1,self.n,self.n))
 
     def calc_force(self, torque: float) -> np.ndarray:
@@ -53,7 +53,12 @@ class Simulation:
             vector on each particle
         '''
         pos_diff = np.einsum("ij,ijk->ik", self.pos_array, self.CALC_DIFF)
-        spring_force = -self.k * pos_diff
+        # Equilibrium position of each particle pair
+        equil_array = pos_diff * self.rest_len / np.linalg.norm(pos_diff, axis=0)
+
+        spring_force = -self.k * (pos_diff - equil_array)
+        # Use Newton's third law to get force on other particle in each pair
+        spring_force[:,:-1] -= spring_force[:,1:]
 
         first_pos = self.pos_array[:,0] # Position of first chain
         radius = np.linalg.norm(first_pos)
@@ -73,7 +78,8 @@ class Simulation:
             dt (float): size of timestep (seconds)
             torque (float): torque to apply to first chain in segment (Nm)
         '''
-        self.mom_array += self.calc_force(torque) * dt
+        self.force_array = self.calc_force(torque)
+        self.mom_array += self.force_array * dt
         self.pos_array += (self.mom_array / self.m) * dt
         
         self.time += dt
