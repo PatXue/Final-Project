@@ -13,16 +13,16 @@ class Simulation:
 
         -------
         ### Args:
-            k (float): spring constant of each chain
+            k (float): total spring constant of entire rope
             n (int): number of chains
-            m (float): mass of each chain
-            rest_len (float): rest length of each chain
+            m (float): total mass of rope
+            rest_len (float): rest length of rope
         '''
         
-        self.k = k
+        self.k = n*k
         self.n = n
-        self.m = m
-        self.rest_len = rest_len
+        self.m = m/n
+        self.rest_len = rest_len/n
 
         self.time = 0.0
 
