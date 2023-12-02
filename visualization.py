@@ -17,13 +17,26 @@ spheres = [sphere(pos=arr_to_vector(sim.pos_array[:,i]),radius=0.025,color=color
 
 # springs = [helix(radius=0.01,thickness=.004,coils=10,color=color.green)] * n
 
+
 t = 0
+
 while (t < 10):
     rate(100)
-
+   
     sim.step(dt, 1)
-    
+    lastPosition = positionInvestigated
+
     for i in range(n):
+        
         spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
+        if  i == n-1:
+            velocityOfTail = (spheres[i].pos - lastPosition) / dt
+            positionInvestigated = spheres[i].pos
+            print(velocityOfTail,mag(velocityOfTail))
+            
+        #if i>1:
+            #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - arr_to_vector(sim.pos_array[:,i-1]) 
+        #elif i==1:
+            #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - pivot.pos
 
     t += dt
