@@ -17,12 +17,14 @@ spheres = [sphere(pos=arr_to_vector(sim.pos_array[:,i]),radius=0.025,color=color
 
 # springs = [helix(radius=0.01,thickness=.004,coils=10,color=color.green)] * n
 
+positionInvestigated = spheres[n-1].pos
 
+step=0
 t = 0
 
 while (t < 10):
     rate(100)
-   
+    step+=1
     sim.step(dt, 1)
     lastPosition = positionInvestigated
 
