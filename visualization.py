@@ -16,14 +16,14 @@ pivot = box(pos=vector(0,0,0),size=vector(0.05,.1,.1),color=color.blue)
 spheres = [sphere(pos=arr_to_vector(sim.pos_array[:,i]),radius=0.025,color=color.red) for i in range(n)]
 # springs = [helix(radius=0.01,thickness=.004,coils=10,color=color.green)] * n
 
-lastPosition = spheres[-1].pos
+last_position = spheres[-1].pos
 
 spheres[-1].trail = curve(color=color.green)
 
 graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=10.0, ymax=0.25, ymin=-0.25,
       x=0, y=500, width=500, height=300)
 
-drawVelocity = gcurve(color=color.magenta,label='Velocity of Tail')
+draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
 
 t = 0
 
@@ -35,9 +35,9 @@ while (t < 10):
         spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
 
     spheres[-1].trail.append(pos=spheres[-1].pos)
-    velocityOfTail = (spheres[-1].pos - lastPosition) / dt
-    lastPosition = spheres[-1].pos
-    drawVelocity.plot(pos=(t, mag(velocityOfTail)))
+    velocity_of_tail = (spheres[-1].pos - last_position) / dt
+    last_position = spheres[-1].pos
+    draw_velocity.plot(pos=(t, mag(velocity_of_tail)))
             
         #if i>1:
             #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - arr_to_vector(sim.pos_array[:,i-1]) 
