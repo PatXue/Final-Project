@@ -30,14 +30,14 @@ t = 0
 while (t < 10):
     rate(100)
     sim.step(dt, 1)
-    
+
     for i in range(n):
         spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
 
     spheres[-1].trail.append(pos=spheres[-1].pos)
     velocityOfTail = (spheres[-1].pos - lastPosition) / dt
-    drawVelocity.plot(pos=(t,velocityOfTail))
     lastPosition = spheres[-1].pos
+    drawVelocity.plot(pos=(t, mag(velocityOfTail)))
             
         #if i>1:
             #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - arr_to_vector(sim.pos_array[:,i-1]) 
