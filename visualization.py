@@ -32,9 +32,14 @@ draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
 
 t: float = 0
 
-while (t < 10):
+step=0
+
+while (t < 2):
+
     rate(100)
     sim.step(dt, torque_func(t))
+
+    step += 1
 
     for i in range(n):
         spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
@@ -42,7 +47,9 @@ while (t < 10):
     spheres[-1].trail.append(pos=spheres[-1].pos)
     velocity_of_tail = sim.mom_array[:,-1] / sim.m
     draw_velocity.plot(pos=(t, np.linalg.norm(velocity_of_tail)))
-            
+
+    if step%10==0:
+        print( np.linalg.norm(velocity_of_tail))
         #if i>1:
             #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - arr_to_vector(sim.pos_array[:,i-1]) 
 
