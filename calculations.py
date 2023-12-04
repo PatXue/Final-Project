@@ -7,19 +7,21 @@ class Simulation:
         [0, 0, 1]]
     )
 
-    def __init__(self, k: float, n: int, m: float, rest_len: float) -> None:
+    def __init__(self, k: float, b: float, n: int, m: float, rest_len: float) -> None:
         '''
         Create instance of Simulation class
 
         -------
         ### Args:
             k (float): total spring constant of entire rope
+            b (float): damping constant of each chain
             n (int): number of chains
             m (float): total mass of rope
             rest_len (float): rest length of rope
         '''
-        
+
         self.k = n*k
+        self.b = b
         self.n = n
         self.m = m/n
         self.rest_len = rest_len/n
@@ -60,6 +62,12 @@ class Simulation:
         # Use Newton's third law to get force on other particle in each pair
         spring_force[:,:-1] -= spring_force[:,1:]
 
+        unit_pos_diff = pos_diff / np.linalg.norm(pos_diff, axis=0)
+        vel_diff = np.einsum("ij,ijk->ik", self.mom_array / self.m, self.CALC_DIFF)
+        axial_vel_diff = np.einsum("ij,ij->j", unit_pos_diff, vel_diff) * unit_pos_diff
+        damp_force = -self.b * axial_vel_diff
+        damp_force[:,:-1] -= damp_force[:,1:]
+
         first_pos = self.pos_array[:,0] # Position of first chain
         radius = np.linalg.norm(first_pos)
         transverse = self.ROT90 @ (first_pos / radius)
@@ -67,7 +75,7 @@ class Simulation:
         torque_force = np.zeros((3,self.n))
         torque_force[:,0] = torque/radius * transverse
 
-        return spring_force + torque_force
+        return spring_force + damp_force + torque_force
 
     def step(self, dt: float, torque: float=0.0) -> None:
         '''Does physics calculations for one timestep.

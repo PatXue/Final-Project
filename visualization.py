@@ -6,12 +6,13 @@ from typing import Callable
 arr_to_vector = lambda A: vector(A[0],A[1],A[2])
 
 linear = lambda t: -1 * t + 1
-torque_func: Callable[[float], float] = linear
+step = lambda t: 1 if t < 1 else -1
+torque_func: Callable[[float], float] = step
 
 n: int = 10
 m: float = 1
 rest_len: float = 1
-sim = Simulation(1000, n, m, rest_len)
+sim = Simulation(1000, 10, n, m, rest_len)
 dt: float = 1e-3
 
 scene = canvas(center=vector(rest_len/2,0,0))
