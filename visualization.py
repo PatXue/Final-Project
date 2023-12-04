@@ -1,8 +1,12 @@
 from vpython import *
 import numpy as np
 from calculations import Simulation
+from typing import Callable
 
 arr_to_vector = lambda A: vector(A[0],A[1],A[2])
+
+linear = lambda t: -1 * t + 1
+torque_func: Callable[[float], float] = linear
 
 n: int = 10
 m: float = 1
@@ -20,16 +24,16 @@ last_position = spheres[-1].pos
 
 spheres[-1].trail = curve(color=color.green)
 
-graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=10.0, ymax=0.25, ymin=0,
+graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=10.0, ymax=10, ymin=0,
       x=0, y=500, width=500, height=300)
 
 draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
 
 t: float = 0
 
-while (t < 10):
+while (t < 2):
     rate(100)
-    sim.step(dt, 1)
+    sim.step(dt, torque_func(t))
 
     for i in range(n):
         spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
