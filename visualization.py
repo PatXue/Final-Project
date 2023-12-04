@@ -32,7 +32,7 @@ draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
 
 t: float = 0
 
-while (t < 2):
+while (t < 10):
     rate(100)
     sim.step(dt, torque_func(t))
 
