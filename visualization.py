@@ -4,11 +4,11 @@ from calculations import Simulation
 
 arr_to_vector = lambda A: vector(A[0],A[1],A[2])
 
-n = 10
-m = 1
-rest_len = 1
-sim = Simulation(500, n, m, rest_len)
-dt = 1e-3
+n: int = 10
+m: float = 1
+rest_len: float = 1
+sim = Simulation(1000, n, m, rest_len)
+dt: float = 1e-3
 
 scene = canvas(center=vector(rest_len/2,0,0))
 pivot = box(pos=vector(0,0,0),size=vector(0.05,.1,.1),color=color.blue)
@@ -25,7 +25,7 @@ graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=10.0, ymax
 
 draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
 
-t = 0
+t: float = 0
 
 while (t < 10):
     rate(100)
