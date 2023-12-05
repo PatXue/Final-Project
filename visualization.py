@@ -6,6 +6,7 @@ from typing import Callable
 arr_to_vector = lambda A: vector(A[0],A[1],A[2])
 
 linear = lambda t: -1 * t + 1
+
 def step(t: float):
     if t < 0.2:
         return 0.5
@@ -13,13 +14,21 @@ def step(t: float):
         return -0.5
     else:
         return 0
+
+def impulse(t: float):
+    pass
+
+def cosine(t: float):
+    if t > 0.4: return 0
+    else: return np.cos(np.pi/0.4 * t)
+
 torque_func: Callable[[float], float] = step
 
 n: int = 20
 m: float = 1
 rest_len: float = 1
 sim = Simulation(1000, 0.05, n, m, rest_len)
-dt: float = 1e-4
+dt: float = 5e-4
 
 scene = canvas(center=vector(rest_len/2,0,0))
 pivot = box(pos=vector(0,0,0),size=vector(0.05,.1,.1),color=color.blue)
