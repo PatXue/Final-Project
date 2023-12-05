@@ -31,7 +31,7 @@ last_position = spheres[-1].pos
 
 spheres[-1].trail = curve(color=color.green)
 
-graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=2.50, ymax=15, ymin=0,
+graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=5.50, ymax=15, ymin=0,
       x=0, y=500, width=500, height=300)
 
 draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
