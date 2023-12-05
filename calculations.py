@@ -14,7 +14,7 @@ class Simulation:
         -------
         ### Args:
             k (float): total spring constant of entire rope
-            b (float): damping constant of each chain
+            b (float): damping constant of entire rope
             n (int): number of chains
             m (float): total mass of rope
             rest_len (float): rest length of rope
