@@ -1,9 +1,9 @@
 from vpython import *
 import numpy as np
+import pandas as pd
 from calculations import Simulation
 from typing import Callable
 
-arr_to_vector = lambda A: vector(A[0],A[1],A[2])
 
 linear = lambda t: -1 * t + 1
 
@@ -35,53 +35,76 @@ def cosine(t: float):
     if t > 0.4: return 0
     else: return 0.5 * np.pi/2*np.cos(np.pi/0.4 * t)
 
-torque_func: Callable[[float], float] = impulse_gen(0.05)
+func_table = {
+    "step": step,
+    "linear": linear,
+    "cosine": cosine,
+    "impulse (0.05s)": impulse_gen(0.05)
+}
+
+arr_to_vector = lambda A: vector(A[0],A[1],A[2])
 
 n: int = 20
 m: float = 1
 rest_len: float = 1
-sim = Simulation(1000, 0.05, n, m, rest_len)
-dt: float = 5e-4
+dt: float = 1e-4
 
-scene = canvas()
-pivot = sphere(pos=vector(0,0,0),radius=0.025,color=color.blue)
+record_vel = True
 
-spheres = [sphere(pos=arr_to_vector(sim.pos_array[:,i]),radius=0.005,color=color.red) for i in range(n)]
-# springs = [helix(radius=0.01,thickness=.004,coils=10,color=color.green)] * n
+if record_vel:
+    data_table = pd.DataFrame(
+        columns=["t", "step", "linear", "cosine", "impulse (0.05s)"],
+        index=pd.RangeIndex(stop=np.ceil(1/dt))
+    )
 
-last_position = spheres[-1].pos
+    for func_name in data_table.columns[1:]:
+        sim = Simulation(1000, 0.05, n, m, rest_len)
+        torque_func = func_table[func_name]
 
-spheres[-1].trail = curve(color=color.green)
+        t: float = 0
+        step: int = 0
+        while (t < 1):
+            data_table.loc[step, "t"] = t
 
-graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=1, ymax=15, ymin=0,
-      x=0, y=500, width=500, height=300)
+            velocity_of_tail = sim.mom_array[:,-1] / sim.m
+            data_table.loc[step, func_name] = np.linalg.norm(velocity_of_tail)
 
-draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
+            sim.step(dt, torque_func(t))
 
-t: float = 0
+            t += dt
+            step += 1
+    
+    print(data_table)
+    data_table.to_csv("output.csv", index=False)
+else:
+    sim = Simulation(1000, 0.05, n, m, rest_len)
+    torque_func: Callable[[float], float] = impulse_gen(0.05)
 
-step=0
-print_vel = False
+    scene = canvas()
+    pivot = sphere(pos=vector(0,0,0),radius=0.025,color=color.blue)
 
-while (t < 1):
-    rate(100)
-    sim.step(dt, torque_func(t))
+    spheres = [sphere(pos=arr_to_vector(sim.pos_array[:,i]),radius=0.005,color=color.red) for i in range(n)]
 
-    step += 1
+    last_position = spheres[-1].pos
+    spheres[-1].trail = curve(color=color.green)
 
-    for i in range(n):
-        spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
+    graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=1, ymax=15, ymin=0,
+        x=0, y=500, width=500, height=300)
+    draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
 
-    spheres[-1].trail.append(pos=spheres[-1].pos)
-    velocity_of_tail = sim.mom_array[:,-1] / sim.m
-    draw_velocity.plot(pos=(t, np.linalg.norm(velocity_of_tail)))
+    t = 0
+    while (t < 1):
+        rate(100)
+        sim.step(dt, torque_func(t))
 
-    if print_vel and step % 10 == 0:
-        print(np.linalg.norm(velocity_of_tail))
-        #if i>1:
-            #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - arr_to_vector(sim.pos_array[:,i-1]) 
+        for i in range(n):
+            spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
 
-        #elif i==1:
-            #springs[i].pos = arr_to_vector(sim.pos_array[:,i]) - pivot.pos
+        spheres[-1].trail.append(pos=spheres[-1].pos)
+        velocity_of_tail = sim.mom_array[:,-1] / sim.m
+        draw_velocity.plot(pos=(t, np.linalg.norm(velocity_of_tail)))
 
-    t += dt
+        if record_vel:
+            pass
+
+        t += dt
