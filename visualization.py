@@ -20,9 +20,9 @@ def impulse(t: float):
 
 def cosine(t: float):
     if t > 0.4: return 0
-    else: return np.cos(np.pi/0.4 * t)
+    else: return 0.5 * np.pi/2*np.cos(np.pi/0.4 * t)
 
-torque_func: Callable[[float], float] = step
+torque_func: Callable[[float], float] = cosine
 
 n: int = 20
 m: float = 1
@@ -40,7 +40,7 @@ last_position = spheres[-1].pos
 
 spheres[-1].trail = curve(color=color.green)
 
-graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=0.5, ymax=15, ymin=0,
+graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=1, ymax=15, ymin=0,
       x=0, y=500, width=500, height=300)
 
 draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
@@ -50,7 +50,7 @@ t: float = 0
 step=0
 print_vel = False
 
-while (t < 0.5):
+while (t < 1):
     rate(100)
     sim.step(dt, torque_func(t))
 
