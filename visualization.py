@@ -49,7 +49,7 @@ n: int = 20
 m: float = 1
 rest_len: float = 1
 dt: float = 1e-4
-record_vel = True
+record_vel = False
 
 if record_vel:
     data_table = pd.DataFrame(
@@ -78,7 +78,7 @@ if record_vel:
 
 else:
     sim = Simulation(1000, 0.05, n, m, rest_len)
-    torque_func: Callable[[float], float] = impulse_gen(0.05)
+    torque_func: Callable[[float], float] = step
 
     scene = canvas()
     pivot = sphere(pos=vector(0,0,0),radius=0.025,color=color.blue)
@@ -94,7 +94,7 @@ else:
 
     t = 0
     while (t < 1):
-        rate(100)
+        rate(500)
         sim.step(dt, torque_func(t))
 
         for i in range(n):
