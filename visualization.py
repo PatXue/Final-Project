@@ -30,8 +30,8 @@ rest_len: float = 1
 sim = Simulation(1000, 0.05, n, m, rest_len)
 dt: float = 5e-4
 
-scene = canvas(center=vector(rest_len/2,0,0))
-pivot = box(pos=vector(0,0,0),size=vector(0.05,.1,.1),color=color.blue)
+scene = canvas()
+pivot = sphere(pos=vector(0,0,0),radius=0.025,color=color.blue)
 
 spheres = [sphere(pos=arr_to_vector(sim.pos_array[:,i]),radius=0.005,color=color.red) for i in range(n)]
 # springs = [helix(radius=0.01,thickness=.004,coils=10,color=color.green)] * n
@@ -40,7 +40,7 @@ last_position = spheres[-1].pos
 
 spheres[-1].trail = curve(color=color.green)
 
-graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=5.50, ymax=15, ymin=0,
+graph(title='Dynamic of Whips', xtitle='Time', ytitle='Velocity',xmax=0.5, ymax=15, ymin=0,
       x=0, y=500, width=500, height=300)
 
 draw_velocity = gcurve(color=color.magenta,label='Velocity of Tail')
@@ -50,7 +50,7 @@ t: float = 0
 step=0
 print_vel = False
 
-while (t < 5):
+while (t < 0.5):
     rate(100)
     sim.step(dt, torque_func(t))
 
