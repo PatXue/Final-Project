@@ -8,6 +8,7 @@ arr_to_vector = lambda A: vector(A[0],A[1],A[2])
 linear = lambda t: -1 * t + 1
 
 def step(t: float):
+    '''A step down function'''
     if t < 0.2:
         return 0.5
     elif t < 0.4:
@@ -15,14 +16,26 @@ def step(t: float):
     else:
         return 0
 
-def impulse(t: float):
-    pass
+def impulse_gen(t_spacing: float) -> Callable[[float], float]:
+    '''Returns a function that returns 2 instantaneous impulses
+    
+    --------
+    ### Args:
+        t_spacing (float): spacing between the two impulses
+    '''
+    global dt
+    def impulse(t: float):
+        if isclose(t, 0, abs_tol=dt/2): return 0.1/dt
+        elif isclose(t, 0 + t_spacing, abs_tol=dt/2): return -0.1/dt
+        else: return 0
+    
+    return impulse
 
 def cosine(t: float):
     if t > 0.4: return 0
     else: return 0.5 * np.pi/2*np.cos(np.pi/0.4 * t)
 
-torque_func: Callable[[float], float] = cosine
+torque_func: Callable[[float], float] = impulse_gen(0.05)
 
 n: int = 20
 m: float = 1
