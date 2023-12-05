@@ -5,16 +5,15 @@ from calculations import Simulation
 from typing import Callable
 
 
-linear = lambda t: -1 * t + 1
+def linear(t: float) -> float:
+    if t > 0.4: return 0
+    else: return -1/0.4 * t + 1
 
-def step(t: float):
-    '''A step down function'''
-    if t < 0.2:
-        return 0.5
-    elif t < 0.4:
-        return -0.5
-    else:
-        return 0
+def step(t: float) -> float:
+    '''A square step down function'''
+    if t < 0.2: return 0.5
+    elif t < 0.4: return -0.5
+    else: return 0
 
 def impulse_gen(t_spacing: float) -> Callable[[float], float]:
     '''Returns a function that returns 2 instantaneous impulses
@@ -39,22 +38,23 @@ func_table = {
     "step": step,
     "linear": linear,
     "cosine": cosine,
-    "impulse (0.05s)": impulse_gen(0.05)
+    "impulse (0.05s)": impulse_gen(0.05),
+    "impulse (0.1s)": impulse_gen(0.1)
 }
 
 arr_to_vector = lambda A: vector(A[0],A[1],A[2])
+
 
 n: int = 20
 m: float = 1
 rest_len: float = 1
 dt: float = 1e-4
-
 record_vel = True
 
 if record_vel:
     data_table = pd.DataFrame(
-        columns=["t", "step", "linear", "cosine", "impulse (0.05s)"],
-        index=pd.RangeIndex(stop=np.ceil(1/dt))
+        columns=["t"] + list(func_table.keys()),
+        index=pd.RangeIndex(stop= np.ceil(1/dt)+1)
     )
 
     for func_name in data_table.columns[1:]:
@@ -64,8 +64,6 @@ if record_vel:
         t: float = 0
         step: int = 0
         while (t < 1):
-            data_table.loc[step, "t"] = t
-
             velocity_of_tail = sim.mom_array[:,-1] / sim.m
             data_table.loc[step, func_name] = np.linalg.norm(velocity_of_tail)
 
@@ -74,8 +72,10 @@ if record_vel:
             t += dt
             step += 1
     
+    data_table["t"] = data_table.index.to_series() * dt
     print(data_table)
     data_table.to_csv("output.csv", index=False)
+
 else:
     sim = Simulation(1000, 0.05, n, m, rest_len)
     torque_func: Callable[[float], float] = impulse_gen(0.05)
