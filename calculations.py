@@ -21,7 +21,7 @@ class Simulation:
         '''
 
         self.k = n*k
-        self.b = b
+        self.b = n*b
         self.n = n
         self.m = m/n
         self.rest_len = rest_len/n
