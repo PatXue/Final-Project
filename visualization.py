@@ -103,14 +103,14 @@ while (t < 5):
 
     step += 1
 
-        for i in range(n):
-            spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
+    for i in range(n):
+        spheres[i].pos = arr_to_vector(sim.pos_array[:,i])
 
-        spheres[-1].trail.append(pos=spheres[-1].pos)
-        velocity_of_tail = sim.mom_array[:,-1] / sim.m
-        draw_velocity.plot(pos=(t, np.linalg.norm(velocity_of_tail)))
+    spheres[-1].trail.append(pos=spheres[-1].pos)
+    velocity_of_tail = sim.mom_array[:,-1] / sim.m
+    draw_velocity.plot(pos=(t, np.linalg.norm(velocity_of_tail)))
 
-        if record_vel:
-            pass
+    if record_vel:
+        pass
 
-        t += dt
+    t += dt
