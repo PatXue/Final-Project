@@ -42,7 +42,7 @@ step=0
 print_vel = False
 
 while (t < 5):
-    rate(100)
+    rate(300)
     sim.step(dt, torque_func(t))
 
     step += 1
